@@ -1,45 +1,47 @@
 class PriorityQueue:
-	class SecretNodeType:
-		def __init__(self, value, next):
-			self.value = value
-			self.next = next
-	
-	# compareFunction is a function of 2 arguments, and returns if the first argument should be before the second argument as a boolean.
-	# compareFunction also may take 3 arguments, the third argument is an acumulator dictionary, that can be used to store whatever is desired, and is passed into each calling of the function
+
+	# compareFunction is a function of 3 arguments, and returns if the first argument should be before the second argument as a boolean, the third argument is an acumulator object that can be used to store whatever is desired, and is passed into each calling of the function
 	# Before every insert the accumulator is set the initialAccumulator's value.
 	def __init__(self, compareFunction, initialAccumulator = {}):
 		self.__compare = compareFunction
-		self.__accumulator = initialAccumulator
+		self.__initialAccumulator = initialAccumulator
 		self.__elements = 0
-		self.__queue = SecretNodeType(None, None)
+		self.__queue = [None, None]
 			
-	def insert(self, newNode):
+	def __insert(self, newNode):
 		previous = self.__queue
-		current = previous.next
+		current = previous[1]
+		accumulator = self.__initialAccumulator
 		while True:
-			if (current is None) or (self.__compare(newNode, current.value, self.__accumulator)):
-				previous.next = PriorityQueue.SecretNodeType(newNode, current)
+			if (current is None) or (self.__compare(newNode, current[0], accumulator)):
+				previous[1] = [newNode, current]
 				break
 			previous = current
-			current = current.next
-		self.__accumulatorReseter(self.__accumulator)
+			current = current[1]
+		
+	def insert(self, newNode):
+		self.__insert(newNode)
 		self.__elements += 1
 
-	def take(self):
-		if self.__next is None:
+	def __take(self):
+		head = self.__queue
+		if head[1] is None:
 			return None
 		else:
-			tmp = self.__next
-			self.__next = tmp.next
-			self.__elements -= 1
-			return tmp
+			output = head[1][0]
+			head[1] = head[1][1]
+			return output
+
+	def take(self):
+		self.__elements -= 1
+		return self.__take()
 
 	def toArray(self):
-		current = self.__next
+		current = self.__queue[1]
 		output = []
 		while current is not None:
-			output.append(current.value)
-			current = current.next
+			output.append(current[0])
+			current = current[1]
 		return output
 
 	@property
@@ -48,14 +50,20 @@ class PriorityQueue:
 
 	def insertMultiple(self, nodes):
 		for n in nodes:
-			self.insert(n)
-		self.__elements += len(nodes)
+			self.__insert(n)
+		self.__elements += n
 
 	def peek(self):
-		return next.value
+		return self.__queue[1][0]
 
 	def takeMultiple(self, number):
-		self.__elements -= number
-		if self.__elements < 0:
-			self.__elements = 0
-		return [self.take() for n in range(number)]
+		current = self.__queue[1]
+		output = []
+		for i in range(number):
+			if current is None:
+				break
+			output.append(current[0])
+			current = current[1]
+		self.__queue[1] = current
+		self.__elements -= len(output)
+		return output
