@@ -1,0 +1,1 @@
+This project makes use of a priority queue class. After that is found/implemented then a comparison function needs to be written that will be used to find the correct place for a plane in the queue. Then the program simply loops over and over adding in each plane and writing to output when nessicary.

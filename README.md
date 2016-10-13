@@ -1,5 +1,5 @@
 This program uses Python 2.7
-
+---
 Input:
 
 The program either can take it's input from standard input or takes a commdand line argument which is the file name of the program.
