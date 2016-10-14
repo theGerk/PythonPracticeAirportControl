@@ -15,7 +15,24 @@ def CreateComparetor(argumentArray, firstGetsPreference):
 class AirPortController:
 	def __init__(self, airplaneRequests):
 		self.__airplaneRequests = airplaneRequests
+		self.__currentIndexInAirplaneRequests = 0
 		self.__queue = PriorityQueue.PriorityQueue(CreateComparetor([(2, False), (1, False), (3, False)], False))
-		self.__time = 0
+		self.__currentTime = -1
 		self.__currentPlane = None # (end time, request)
+
+	def tick(self):
+		self.__currentTime += 1
+
+		#move plane out of runway if it is in it
+		if self.__currentPlane is not None and self.__currentPlane[0] == self.__currentTime:
+			self.__currentPlane = None
+
+		while self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests):
+			airplane = self.__airplaneRequests[self.__currentIndexInAirplaneRequests]
+			if airplane[1] == self.__currentTime:
+				self.__queue.insert(airplane)
+			self.__currentIndexInAirplaneRequests += 1
+
+		if self.__currentPlane is None and self.__queue.peek()[2] <= self.__currentTime:
+			self.__currentPlane = self.__queue.take()
 
