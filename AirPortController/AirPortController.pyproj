@@ -26,6 +26,9 @@
     <Compile Include="PriorityQueue.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestData.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

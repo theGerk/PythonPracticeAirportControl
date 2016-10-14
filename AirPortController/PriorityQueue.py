@@ -6,7 +6,8 @@ class PriorityQueue:
 		self.__initialAccumulator = initialAccumulator
 		self.__elements = 0
 		self.__queue = [None, None]
-			
+
+
 	def __insert(self, newNode):
 		previous = self.__queue
 		current = previous[1]
@@ -52,8 +53,12 @@ class PriorityQueue:
 			self.__insert(n)
 		self.__elements += n
 
+	@property
 	def peek(self):
-		return self.__queue[1][0]
+		if self.__queue[1] is None:
+			return None
+		else:
+			return self.__queue[1][0]
 
 	def takeMultiple(self, number):
 		current = self.__queue[1]
@@ -66,3 +71,7 @@ class PriorityQueue:
 		self.__queue[1] = current
 		self.__elements -= len(output)
 		return output
+
+	@property
+	def isEmpty(self):
+		return self.__elements == 0
