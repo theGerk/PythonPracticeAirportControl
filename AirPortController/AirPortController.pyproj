@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>016498b4-d51f-4f96-8d6a-ecba5e1ab7d4</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AirPortController.py</StartupFile>
+    <StartupFile>Main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AirPortController.py" />
+    <Compile Include="AirportController.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main.py" />
     <Compile Include="PriorityQueue.py">
       <SubType>Code</SubType>
     </Compile>

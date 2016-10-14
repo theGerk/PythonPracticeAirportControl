@@ -1,16 +1,5 @@
 import PriorityQueue
 
-# argumentArray in form of tuples, with first entry being the index name, the second being a boolean
-#                                                                                               True => greater gets precedence
-#                                                                                               False => lesser gets precedence
-def CreateComparetor(argumentArray, firstGetsPreference):
-	def output(a, b, acumulator = None):
-		for arg in argumentArray:
-			if a[arg[0]] != b[arg[0]]:
-				return (a[arg[0]] > b[arg[0]]) == arg[1]
-		return firstGetsPreference
-	return output
-
 
 def isAllNone(input):
 	for elem in input:
@@ -18,11 +7,34 @@ def isAllNone(input):
 			return False
 	return True
 
-class AirPortController: 
+
+def getFirstMinIndex(input):
+	if not (len(input) > 0):
+		return None
+	minIndex = 0
+	i = 1
+	while i < len(input):
+		if input[i] < input[minIndex]:
+			minIndex = i
+		i += 1
+	return minIndex
+
+def getFirstMaxIndex(input):
+	if not (len(input) > 0):
+		return None
+	minIndex = 0
+	i = 1
+	while i < len(input):
+		if input[i] > input[maxIndex]:
+			maxIndex = i
+		i += 1
+	return maxIndex
+
+class AirportController: 
 	def __init__(self, airplaneRequests, lanes):
 		self.__airplaneRequests = airplaneRequests
 		self.__currentIndexInAirplaneRequests = 0
-		self.__queue = PriorityQueue.PriorityQueue(CreateComparetor([(2, False), (1, False), (3, False)], False))
+		self.__queue = PriorityQueue.PriorityQueue(PriorityQueue.CreateComparetor([(2, False), (1, False), (3, False)], False))
 		self.__currentTime = -1
 		self.__currentPlanes = [None] * lanes # [(end time, request)]
 
@@ -72,23 +84,26 @@ class AirPortController:
 		output += 'The runways:\n'
 		runwayFormatString = '\t{0} is currently on runway {2} and will take off in {1} ticks.\n'
 		emptyRunwayFormatString = '\tRunway {0} is currently empty.\n'
-		queueFormatString = '\t{0}: Request submitted at t = {1} for t = {2}. Will take {3} ticks to take off.\n'
+		queueFormatString = '\t{0}: Request submitted at t = {1} for t = {2}. Will take {3} ticks to take off. Is schedualed for runway {4} at t = {5}\n'
 
+
+		runwayClearArray = []
 		i = 0
 		while i < len(self.__currentPlanes):
 			plane = self.__currentPlanes[i]
 			if plane is None:
 				output += emptyRunwayFormatString.format(i)
+				runwayClearArray.append(self.__currentTime)
 			else:
 				output += runwayFormatString.format(plane[1][0], plane[0] - self.__currentTime, i)
+				runwayClearArray.append(plane[0])
 			i += 1
 
 		output += 'The request queue:\n'
 
 		for entry in self.__queue.toArray():
-			output += queueFormatString.format(entry[0],entry[1],entry[2],entry[3])
+			lane = getFirstMinIndex(runwayClearArray)
+			output += queueFormatString.format(entry[0],entry[1],entry[2],entry[3], lane, runwayClearArray[lane])
+			runwayClearArray[lane] += entry[3]
 		
 		return output
-
-import TestData
-plane = AirPortController(TestData.q, 1)
