@@ -1,5 +1,4 @@
 class PriorityQueue:
-
 	# compareFunction is a function of 3 arguments, and returns if the first argument should be before the second argument as a boolean, the third argument is an acumulator object that can be used to store whatever is desired, and is passed into each calling of the function
 	# Before every insert the accumulator is set the initialAccumulator's value.
 	def __init__(self, compareFunction, initialAccumulator = {}):
