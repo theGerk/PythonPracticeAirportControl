@@ -1,7 +1,5 @@
 import PriorityQueue
 
-lanes = 1
-
 # argumentArray in form of tuples, with first entry being the index name, the second being a boolean
 #                                                                                               True => greater gets precedence
 #                                                                                               False => lesser gets precedence
@@ -21,7 +19,7 @@ def isAllNone(input):
 	return True
 
 class AirPortController: 
-	def __init__(self, airplaneRequests):
+	def __init__(self, airplaneRequests, lanes):
 		self.__airplaneRequests = airplaneRequests
 		self.__currentIndexInAirplaneRequests = 0
 		self.__queue = PriorityQueue.PriorityQueue(CreateComparetor([(2, False), (1, False), (3, False)], False))
@@ -93,4 +91,4 @@ class AirPortController:
 		return output
 
 import TestData
-plane = AirPortController(TestData.q)
+plane = AirPortController(TestData.q, 1)
