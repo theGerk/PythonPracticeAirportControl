@@ -12,3 +12,10 @@ def CreateComparetor(argumentArray, firstGetsPreference):
 	return output
 
 
+class AirPortController:
+	def __init__(self, airplaneRequests):
+		self.__airplaneRequests = airplaneRequests
+		self.__queue = PriorityQueue.PriorityQueue(CreateComparetor([(2, False), (1, False), (3, False)], False))
+		self.__time = 0
+		self.__currentPlane = None # (end time, request)
+
