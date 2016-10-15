@@ -8,27 +8,21 @@ def isAllNone(input):
 	return True
 
 
-def getFirstMinIndex(input):
+def getFirstIndexlessThenOrEqualToXOrLeastValueIfThereIsNonelessThenOrEqualToX(input, x):
 	if not (len(input) > 0):
 		return None
+	elif input[0] <= x:
+		return 0
 	minIndex = 0
 	i = 1
 	while i < len(input):
 		if input[i] < input[minIndex]:
+			if i <= x:
+				return i
 			minIndex = i
 		i += 1
 	return minIndex
 
-def getFirstMaxIndex(input):
-	if not (len(input) > 0):
-		return None
-	minIndex = 0
-	i = 1
-	while i < len(input):
-		if input[i] > input[maxIndex]:
-			maxIndex = i
-		i += 1
-	return maxIndex
 
 class AirportController: 
 	def __init__(self, airplaneRequests, lanes):
@@ -76,7 +70,7 @@ class AirportController:
 		return changeDetected
 
 	@property
-	def complete(self):
+	def isComplete(self):
 		return self.__currentIndexInAirplaneRequests >= len(self.__airplaneRequests) and self.__queue.isEmpty and isAllNone(self.__runways)
 
 
@@ -103,7 +97,8 @@ class AirportController:
 		output += 'The request queue:\n'
 
 		for entry in self.__queue.toArray():
-			lane = getFirstMinIndex(runwayClearArray)
+			lane = getFirstIndexlessThenOrEqualToXOrLeastValueIfThereIsNonelessThenOrEqualToX(runwayClearArray, entry[2])
+			runwayClearArray[lane] = max(runwayClearArray[lane], entry[2])
 			output += queueFormatString.format(entry[0],entry[1],entry[2],entry[3], lane, runwayClearArray[lane])
 			runwayClearArray[lane] += entry[3]
 		

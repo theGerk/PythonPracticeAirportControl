@@ -3,9 +3,9 @@ import TestData
 
 
 for test in TestData.q:
-		lanes = 0
+	for lanes in range(10):
 		airport = AirportController.AirportController(test, lanes + 1)
-		while not airport.complete:
+		while not airport.isComplete:
 			if airport.tick():
 				print airport.toString()
-		print '\n-----------------------------------------------------\n'
+		print '-----------------------------------------------------\n'
