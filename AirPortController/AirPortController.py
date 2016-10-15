@@ -36,19 +36,19 @@ class AirportController:
 		self.__currentIndexInAirplaneRequests = 0
 		self.__queue = PriorityQueue.PriorityQueue(PriorityQueue.CreateComparetor([(2, False), (1, False), (3, False)], False))
 		self.__currentTime = -1
-		self.__currentPlanes = [None] * lanes # [(end time, request)]
-
-		self.__complete()
+		self.__runways = [None] * lanes # [(end time, request)]
 
 
-	def __tick(self):
+	def tick(self):
 		self.__currentTime += 1
+		changeDetected = False
 
 		#move planes out of runways if they are done taking off
 		i = 0
-		while i < len(self.__currentPlanes):
-			if self.__currentPlanes[i] is not None and self.__currentPlanes[i][0] == self.__currentTime:
-				self.__currentPlanes[i] = None
+		while i < len(self.__runways):
+			if self.__runways[i] is not None and self.__runways[i][0] == self.__currentTime:
+				self.__runways[i] = None
+				changeDetected = True
 			i += 1
 
 		#add new requests into queue
@@ -56,27 +56,28 @@ class AirportController:
 			airplane = self.__airplaneRequests[self.__currentIndexInAirplaneRequests]
 			if airplane[1] == self.__currentTime:
 				self.__queue.insert(airplane)
+				changeDetected = True
 			else:
 				break
 			self.__currentIndexInAirplaneRequests += 1
 
 		#move new planes into runway
 		i = 0
-		while i < len(self.__currentPlanes):
+		while i < len(self.__runways):
 			peek = self.__queue.peek
-			if self.__currentPlanes[i] is None and peek is not None and peek[2] <= self.__currentTime:
+			if self.__runways[i] is None and peek is not None and peek[2] <= self.__currentTime:
 				tmp = self.__queue.take()
-				self.__currentPlanes[i] = (tmp[3] + self.__currentTime, tmp)
+				self.__runways[i] = (tmp[3] + self.__currentTime, tmp)
+				changeDetected = True
 			elif peek is None or peek[2] > self.__currentTime:
 				break
 			i += 1
 
-		print self.toString()
+		return changeDetected
 
-
-	def __complete(self):
-		while self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests) or not self.__queue.isEmpty or not isAllNone(self.__currentPlanes):
-			self.__tick()
+	@property
+	def complete(self):
+		return self.__currentIndexInAirplaneRequests >= len(self.__airplaneRequests) and self.__queue.isEmpty and isAllNone(self.__runways)
 
 
 	def toString(self):
@@ -89,8 +90,8 @@ class AirportController:
 
 		runwayClearArray = []
 		i = 0
-		while i < len(self.__currentPlanes):
-			plane = self.__currentPlanes[i]
+		while i < len(self.__runways):
+			plane = self.__runways[i]
 			if plane is None:
 				output += emptyRunwayFormatString.format(i)
 				runwayClearArray.append(self.__currentTime)
