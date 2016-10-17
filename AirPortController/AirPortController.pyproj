@@ -32,9 +32,6 @@
     <Compile Include="PriorityQueue.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestData.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="testData.txt" />
