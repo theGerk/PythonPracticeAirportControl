@@ -5,7 +5,7 @@ class PriorityQueue:
 		self.__compare = compareFunction
 		self.__initialAccumulator = initialAccumulator
 		self.__elements = 0
-		self.__queue = [None, None]
+		self.__queue = [None, None]	# an element that goes before the head, index 1 will point to the first element. Can be thought of as our head pointer.
 
 
 	def __insert(self, newNode):

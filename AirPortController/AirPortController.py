@@ -8,7 +8,7 @@ def isAllNone(input):
 	return True
 
 
-def getFirstIndexlessThenOrEqualToXOrLeastValueIfThereIsNonelessThenOrEqualToX(input, x):
+def getFirstIndexlessThenOrEqualToXOrIsLeastValueIfThereIsNonelessThenOrEqualToX(input, x):
 	if not (len(input) > 0):
 		return None
 	elif input[0] <= x:
@@ -99,7 +99,7 @@ class AirportController:
 		myQueue = self.__queue.toArray()
 		for i in range(self.__queue.elements):
 			entry = myQueue[i]
-			lane = getFirstIndexlessThenOrEqualToXOrLeastValueIfThereIsNonelessThenOrEqualToX(runwayClearArray, entry['requested time'])
+			lane = getFirstIndexlessThenOrEqualToXOrIsLeastValueIfThereIsNonelessThenOrEqualToX(runwayClearArray, entry['requested time'])
 			runwayClearArray[lane] = max(runwayClearArray[lane], entry['requested time'])
 			output += queueFormatString.format(entry['name'],entry['submission time'],entry['requested time'],entry['take off time'], lane, runwayClearArray[lane], i)
 			runwayClearArray[lane] += entry['take off time']
