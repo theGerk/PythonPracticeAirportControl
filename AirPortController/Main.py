@@ -1,5 +1,4 @@
 import AirportController
-import TestData
 import sys
 
 
@@ -17,7 +16,7 @@ if len(sys.argv) == 2:
 			raise ValueError('input out of range')
 	except ValueError:
 		try:
-			myFile = open(sys.arg[1])
+			myFile = open(sys.argv[1])
 		except IOError:
 			print '"%s" is not a file or a valid integer' % sys.argv[1]
 			print
