@@ -4,7 +4,7 @@ import sys
 
 def lineToRequst(line):
 	a = line.split(',')
-	return (a[0], int(a[1]), int(a[2]), int(a[3]))
+	return {"name": a[0], "submission time": int(a[1]), "requested time": int(a[2]), "take off time": int(a[3])}
 
 
 myFile = sys.stdin
