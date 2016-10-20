@@ -4,7 +4,9 @@ This program uses Python 2.7
 
 Input:
 
-The program either can take it's input from standard input or takes a commdand line argument which is the file name of the program.
+The program either can take it's input from standard input or takes it from a file passed as a command line argument.
+The program can take up to 2 command line arguments. One argument determines the number of lanes the airport has, (how many planes can be taking off in parallel), the other determines the input file. The number of lanes is given as a typed integer greater then 0. The file is given as the file name. The order these commands are passed does not mater, unless the file name is also a valid number of lanes, in which case the program assumes that you mean it to be the number of lanes. This is gotten around by putting the number of lanes as the first argument and the file name as the second.
+
 The input is to be formated in the following form:
 
 ID, Submission Time, Requested Start, Requested Duration
@@ -25,7 +27,7 @@ Made up airline PI^2, 3, 8, 10
 Each of these entries are put on a single line and there may be no blank lines inbetween, or the behavior is undefined.
 
 
-----------------------------------------------------------------------------------------------------
+-----------------
 
 
 What it does:
@@ -37,7 +39,7 @@ The program then adds each entry into a priority queue for which it's Submission
 Then the program increments the time by 1 and repeats, until there are no more entries, and all planes have taken off.
 
 
-----------------------------------------------------------------------------------------------------
+-----------------
 
 
 Output:

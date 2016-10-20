@@ -2,8 +2,12 @@
 Delta 160, 0, 0, 4
 UAL 120, 0, 5, 4
 1, 0, 2, 1
+Hey Hey Ho Ho, 1, 001, 10
 2, 1, 1, 3
 3, 1, 3, 3
 4, 3, 9, 2
 Made up airline PI^2, 3, 8, 10
 5, 10, 10, 4
+another shity name 99, 100, 102, 70
+slip right in here 100, 101, 101, 10
+another plane btw, 100, 102, 1

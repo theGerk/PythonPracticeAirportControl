@@ -1,32 +1,90 @@
+"""
+Airport controller class, specifically made for this project.
+See it's doucmentation for further details.
+"""
 import PriorityQueue
 
 
 def isAllNone(input):
+	"""
+	input -> any iteratable object
+
+	Returns if every element in input is None.
+	"""
 	for elem in input:
 		if elem is not None:
 			return False
 	return True
 
 
-def getFirstIndexlessThenOrEqualToXOrIsLeastValueIfThereIsNonelessThenOrEqualToX(input, x):
+def getFirstIndexLessThenOrEqualToXOrIsLeastValueIfThereIsNoneLessThenOrEqualToX(input, X):
+	"""
+	input -> list or tuple of values comparable by '<' and '<=' operators
+	X -> a value that could exist in the list
+	
+	Returns the first index that has a value less then or equal to X in input.
+	If there are none then it returns the index at which the value is least.
+	Returns None if the list is empty.
+	"""
+	#none if list is empty
 	if not (len(input) > 0):
 		return None
-	elif input[0] <= x:
+
+	#returns the first element if it's less then X
+	elif input[0] <= X:
 		return 0
+
+	#assume minIndex is 0
 	minIndex = 0
-	i = 1
-	while i < len(input):
+
+	#check each other index
+	for i in range(1, len(input)):
 		if input[i] < input[minIndex]:
-			if i <= x:
+			if i <= X:
 				return i
 			minIndex = i
-		i += 1
+
+	#returns after not finding anything less or equal to then X
 	return minIndex
 
 
+
+def lineToRequst(line):
+	"""
+	line -> string in format "name, submission time, requested time, take off time"
+
+	returns dictionary with name of feild refering the value
+	"""
+	a = line.split(',')
+	return {"name": a[0], "submission time": int(a[1]), "requested time": int(a[2]), "take off time": int(a[3])}
+
+
 class AirportController: 
-	def __init__(self, airplaneRequests, lanes):
-		self.__airplaneRequests = airplaneRequests
+	"""
+	Represents an airport, takes a list of requests and a number lanes and then can be ticked through.
+	To string outputs it's current state in human readable form
+	"""
+
+	def __init__(self, airplaneRequests, lanes = 1):
+		"""
+		airplaneRequests:
+			string formated as "name, submission time, requested time, take off time" repeated for as many requests as there are, with newlines between.
+			list of strings formated as "name, submssion time, requested time, take off time"
+		lanes -> integer greater then 0, defaults to 1
+		"""
+
+		#if airplaneRequests is a string
+		if isinstance(airplaneRequests, str):
+			self.__airplaneRequests = []
+			for line in airplaneRequests.split('\n'):
+				if len(line) > 1:
+					self.__airplaneRequests.append(lineToRequst(line))
+
+		#if airplaneRequests is a list
+		elif isinstance(airplaneRequests, list):
+			self.__airplaneRequests = [lineToRequst(line) for line in airplaneRequests]		#expected to be in correct format
+
+
 		self.__currentIndexInAirplaneRequests = 0
 		self.__queue = PriorityQueue.PriorityQueue(PriorityQueue.CreateComparetor([('requested time', False), ('submission time', False), ('take off time', False)], False))
 		self.__currentTime = -1
@@ -34,16 +92,21 @@ class AirportController:
 
 
 	def tick(self):
+		"""
+		increments time by 1, and then does all logic that would be done at that time.
+		returns if any of the bellow have happened:
+			a new plane has been added to the queue
+			a plane has been removed from a runway
+			a plane is being added to the runway
+		"""
 		self.__currentTime += 1
 		changeDetected = False
 
 		#move planes out of runways if they are done taking off
-		i = 0
-		while i < len(self.__runways):
+		for i in range(len(self.__runways)):
 			if self.__runways[i] is not None and self.__runways[i]['end time'] == self.__currentTime:
 				self.__runways[i] = None
 				changeDetected = True
-			i += 1
 
 		#add new requests into queue
 		while self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests):
@@ -56,52 +119,81 @@ class AirportController:
 			self.__currentIndexInAirplaneRequests += 1
 
 		#move new planes into runway
-		i = 0
-		while i < len(self.__runways):
+		for i in range(len(self.__runways)):
 			peek = self.__queue.peek
 			if self.__runways[i] is None and peek is not None and peek['requested time'] <= self.__currentTime:
-				tmp = self.__queue.take()
+				tmp = self.__queue.pop()
 				self.__runways[i] = {'end time': tmp['take off time'] + self.__currentTime, 'request': tmp}
 				changeDetected = True
 			elif peek is None or peek['requested time'] > self.__currentTime:
 				break
-			i += 1
 
 		return changeDetected
 
 	@property
 	def isComplete(self):
+		"""
+		returns if the airport object is finished being used (is passed the amount of time at which anything new will happen)
+		"""
 		return self.__currentIndexInAirplaneRequests >= len(self.__airplaneRequests) and self.__queue.isEmpty and isAllNone(self.__runways)
 
 
 	def toString(self):
-		output = 'The time is currently t = {0}.\n'.format(self.__currentTime)
-		output += 'The runways:\n'
+		"""
+		returns the object as a string formated to be human readable with all important information.
+
+		First outputs current time.
+		Then outputs information about planes in each runway.
+		Then outputs information about each plane in the queue, and when they are going to take off and from what lane.
+		"""
+
+		#format strings
 		runwayFormatString = '\t{2}: {0} will take off in {1} ticks.\n'
 		emptyRunwayFormatString = '\t{0}: Is currently empty.\n'
 		queueFormatString = '\t{6}: {0} submitted request at t = {1} for t = {2}. Will take {3} ticks to take off. Is schedualed for runway {4} at t = {5}\n'
 
 
+		#start building ouptut
+		output = 'The time is currently at t = {0}.\n'.format(self.__currentTime)
+		output += 'The runways:\n'
+
+
+		#array of times at which each runway will be empty again
 		runwayClearArray = []
-		i = 0
-		while i < len(self.__runways):
+
+		#build output for the current runways and build runwayClearArray
+		for i in range(len(self.__runways)):
 			plane = self.__runways[i]
-			if plane is None:
+			if plane is None:	#there is no plane in this runway
 				output += emptyRunwayFormatString.format(i)
 				runwayClearArray.append(self.__currentTime)
-			else:
+			else:				#there is a plane in this runway
 				output += runwayFormatString.format(plane['request']['name'], plane['end time'] - self.__currentTime, i)
 				runwayClearArray.append(plane['end time'])
-			i += 1
+
 
 		output += 'The request queue:\n'
 
-		myQueue = self.__queue.toArray()
+
+		myQueue = self.__queue.toList()		#the array containing all elements in the queue
+
+
+		#iterate across elements in the queue (does not use		for entry in self.__queue.toArray()		as we need the index to be known)
 		for i in range(self.__queue.elements):
 			entry = myQueue[i]
-			lane = getFirstIndexlessThenOrEqualToXOrIsLeastValueIfThereIsNonelessThenOrEqualToX(runwayClearArray, entry['requested time'])
+
+			#computes which runway lane the current plane is being schedualed to use
+			lane = getFirstIndexLessThenOrEqualToXOrIsLeastValueIfThereIsNoneLessThenOrEqualToX(runwayClearArray, entry['requested time'])
+
+			#update runwayClearArray, to being the the value at which the current plane will get onto it
 			runwayClearArray[lane] = max(runwayClearArray[lane], entry['requested time'])
+
+			#add into output
 			output += queueFormatString.format(entry['name'],entry['submission time'],entry['requested time'],entry['take off time'], lane, runwayClearArray[lane], i)
+
+			#add the amount of time needed to take off to this runway's entry in runwayClearArray
 			runwayClearArray[lane] += entry['take off time']
 		
+
+
 		return output
