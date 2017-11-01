@@ -90,6 +90,19 @@ class AirportController:
 		self.__currentTime = -1
 		self.__runways = [None] * lanes # [{"end time", "request"}]
 
+	
+	def mutliTick(self):
+		"""
+		ticks until a change happens, should do this more efficently then tick function.
+		does nothing if the airport is complete
+		"""
+		if(self.isComplete()):
+			return 0
+		else:
+			ticks = 1
+			while not self.tick():
+				ticks += 1
+			return ticks
 
 	def tick(self):
 		"""
