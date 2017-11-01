@@ -97,16 +97,12 @@ class AirportController:
 		does nothing if the airport is complete
 		returns number of ticks completed
 		"""
-		#find next events
-		moveTimeTo = float('inf')
 
 		if self.isComplete():
 			return 0
 
 		#plane leaving runway
-		for runway in self.__runways:
-			if runway['end time'] < moveTimeTo:
-				moveTimeTo = runway['end time']
+		moveTimeTo = min(self.__runways, key = lambda runway: runway['end time'])['end time']
 
 		#new requests enter queue
 		if self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests):

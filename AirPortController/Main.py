@@ -62,8 +62,5 @@ if myFile != sys.stdin:
 	myFile.close()
 
 
-while not airport.isComplete:		#	isComplete checks if nothing new will ever happen when ticking through it.
-	if airport.tick():				#	tick makes a tick happen... returns true if anything changed
-		print airport.toString()	#	to string makes a string of all information there is needed about airport
-
-
+while airport.multiStep() != 0:
+	print airport.toString()	#	to string makes a string of all information there is needed about airport
