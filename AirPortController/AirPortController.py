@@ -91,20 +91,45 @@ class AirportController:
 		self.__runways = [None] * lanes # [{"end time", "request"}]
 
 	
-	def mutliTick(self):
+	def multiStep(self):
 		"""
 		ticks until a change happens, should do this more efficently then tick function.
 		does nothing if the airport is complete
+		returns number of ticks completed
 		"""
-		if(self.isComplete()):
-			return 0
-		else:
-			ticks = 1
-			while not self.tick():
-				ticks += 1
-			return ticks
+		#find next events
+		moveTimeTo = float('inf')
 
-	def tick(self):
+		if self.isComplete():
+			return 0
+
+		#plane leaving runway
+		for runway in self.__runways:
+			if runway['end time'] < moveTimeTo:
+				moveTimeTo = runway['end time']
+
+		#new requests enter queue
+		if self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests):
+			airplane = self.__airplaneRequests[self.__currentIndexInAirplaneRequests]
+			if airplane['submission time'] < moveTimeTo:
+				moveTimeTo = airplane['submission time']
+
+		#move plane into runway
+		peek = self.__queue.peek
+		if None in runway and peek is not None:
+			if peek['requested time'] < moveTimeTo:
+				moveTimeTo = peek['requested time']
+
+		#set time to one less then target
+		output = moveTimeTo - currentTime
+		self.currentTime = moveTimeTo - 1
+		
+		#do stuff
+		self.step()
+		return output
+
+
+	def step(self):
 		"""
 		increments time by 1, and then does all logic that would be done at that time.
 		returns if any of the bellow have happened:
