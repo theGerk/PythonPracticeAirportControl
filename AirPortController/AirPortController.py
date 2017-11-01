@@ -98,11 +98,12 @@ class AirportController:
 		returns number of ticks completed
 		"""
 
-		if self.isComplete():
+		if self.isComplete:
 			return 0
 
 		#plane leaving runway
-		moveTimeTo = min(self.__runways, key = lambda runway: runway['end time'])['end time']
+		moveTimeTo = (min(self.__runways, key = lambda runway: float('inf') if runway == None else runway['end time']))
+		moveTimeTo = moveTimeTo['end time'] if moveTimeTo is not None else float('inf')
 
 		#new requests enter queue
 		if self.__currentIndexInAirplaneRequests < len(self.__airplaneRequests):
@@ -112,13 +113,13 @@ class AirportController:
 
 		#move plane into runway
 		peek = self.__queue.peek
-		if None in runway and peek is not None:
+		if None in self.__runways and peek is not None:
 			if peek['requested time'] < moveTimeTo:
 				moveTimeTo = peek['requested time']
 
 		#set time to one less then target
-		output = moveTimeTo - currentTime
-		self.currentTime = moveTimeTo - 1
+		output = moveTimeTo - self.__currentTime
+		self.__currentTime = moveTimeTo - 1
 		
 		#do stuff
 		self.step()

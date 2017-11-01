@@ -62,5 +62,13 @@ if myFile != sys.stdin:
 	myFile.close()
 
 
+
+#Old outdated way
+#
+#while not airport.isComplete:
+#	if airport.step():
+#		print airport.toString()
+#
+
 while airport.multiStep() != 0:
 	print airport.toString()	#	to string makes a string of all information there is needed about airport
